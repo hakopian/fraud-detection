@@ -1,0 +1,7 @@
+pandas
+numpy
+faker
+kafka-python
+pymongo
+scikit-learn
+mysql-connector-python
