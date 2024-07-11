@@ -1,18 +1,31 @@
-from kafka import KafkaProducer
 import pandas as pd
+from kafka import KafkaProducer
 import json
+import time
 
-def produce_data(file_path):
-    producer = KafkaProducer(
-        bootstrap_servers=['localhost:9092'],
-        value_serializer=lambda x: json.dumps(x).encode('utf-8')
-    )
+def create_producer():
+    for _ in range(10):  # Retry 10 times
+        try:
+            producer = KafkaProducer(
+                bootstrap_servers='kafka:9092',
+                value_serializer=lambda v: json.dumps(v).encode('utf-8')
+            )
+            return producer
+        except Exception as e:
+            print("Kafka server not ready, retrying in 5 seconds...")
+            time.sleep(5)
+    raise Exception("Kafka server not ready after 10 attempts")
 
-    transaction_data = pd.read_csv(file_path)
+def read_data():
+    df = pd.read_csv('synthetic_transaction_data.csv')
+    return df.to_dict(orient='records')
 
-    for index, row in transaction_data.iterrows():
-        producer.send('transaction_topic', value=row.to_dict())
-    producer.flush()
+producer = create_producer()
+data = read_data()
 
-if __name__ == "__main__":
-    produce_data('synthetic_transaction_data.csv')
+for record in data:
+    producer.send('your-topic', value=record)
+    print(f'Sent: {record}')
+    time.sleep(1)  
+
+producer.flush()
