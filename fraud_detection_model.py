@@ -16,7 +16,9 @@ def train_model(file_path):
     model = RandomForestClassifier()
     model.fit(X_train, y_train)
     predictions = model.predict(X_test)
+    # pickle, save the data
     print(classification_report(y_test, predictions))
 
 if __name__ == "__main__":
     train_model('synthetic_transaction_data.csv')
+

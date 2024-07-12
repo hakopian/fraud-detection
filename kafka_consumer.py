@@ -22,7 +22,7 @@ def create_consumer():
     raise Exception("Kafka server not ready after 10 attempts")
 
 def create_mongo_client():
-    for _ in range(10):  # Retry 10 times
+    for _ in range(10):  
         try:
             client = MongoClient('mongo', 27017)
             return client
@@ -32,7 +32,7 @@ def create_mongo_client():
     raise Exception("MongoDB server not ready after 10 attempts")
 
 def create_mysql_connection():
-    for _ in range(10):  # Retry 10 times
+    for _ in range(10):  
         try:
             connection = mysql.connector.connect(
                 host='mysql',
@@ -51,7 +51,7 @@ mongo_client = create_mongo_client()
 mysql_connection = create_mysql_connection()
 mysql_cursor = mysql_connection.cursor()
 
-# Create table if it doesn't exist
+
 mysql_cursor.execute("""
     CREATE TABLE IF NOT EXISTS transactions (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,8 +66,8 @@ mysql_cursor.execute("""
     )
 """)
 
-db = mongo_client.fraud_detection  # Replace with your actual database name
-collection = db.transactions  # Replace with your actual collection name
+db = mongo_client.fraud_detection  
+collection = db.transactions 
 
 for message in consumer:
     data = message.value

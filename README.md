@@ -9,14 +9,16 @@ This project implements a data pipeline for fraud detection. It generates synthe
 
 ### Data Generation
 
-- **Faker Library:** Generates synthetic transaction data.
-- **Python Script (`kafka_producer.py`):** Runs the Faker library and sends data to the Kafka producer.
+- **Synthetic Library:** Generates synthetic transaction data.
+- **Python Script (`kafka_producer.py`):** Runs the Synthetic library and sends data to the Kafka producer.
 
 ### Data Streaming
 
 - **Kafka Producer:** Sends data to Kafka topics.
 - **Apache Kafka:** Acts as the message broker.
 - **Kafka Consumer (`kafka_consumer.py`):** Consumes data from Kafka topics.
+
+- **Kafka Topics:** Kafka topics are categories to which messages are published by produces, and read by consumers. Topics are the primary way for organizing and managing data in Apache Kafka.
 
 ### Data Storage
 
@@ -33,10 +35,6 @@ This project implements a data pipeline for fraud detection. It generates synthe
 - **Docker Containers:** Each component runs in its own Docker container.
 - **Docker Compose:** Manages multi-container Docker applications.
 
-## Prerequisites
-
-- Docker
-- Docker Compose
 
 ## Getting Started
 
@@ -46,12 +44,6 @@ To start the services and see logs in real-time:
 
 ```bash
 docker-compose up
-```
-
-To start the services in detached mode:
-
-```bash
-docker-compose up -d
 ```
 
 ### Stopping the Services
@@ -69,7 +61,7 @@ docker-compose down
 To access MongoDB:
 
 ```bash
-docker exec -it fraud-detection-mongo-1 mongo
+docker exec -it fraud-detection-mongo-1 mongosh
 ```
 
 Within the MongoDB shell:

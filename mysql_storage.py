@@ -4,8 +4,8 @@ import pandas as pd
 def store_flagged_transactions(file_path):
     conn = mysql.connector.connect(
         host='localhost',
-        user='yourusername',
-        password='yourpassword',
+        user='username',
+        password='password',
         database='fraud_detection'
     )
     cursor = conn.cursor()
