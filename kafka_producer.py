@@ -17,7 +17,7 @@ def create_producer():
     raise Exception("Kafka server not ready after 10 attempts")
 
 def read_data():
-    df = pd.read_csv('synthetic_transaction_data.csv')
+    df = pd.read_csv('predicted_test_transaction_data.csv')
     return df.to_dict(orient='records')
 
 producer = create_producer()
