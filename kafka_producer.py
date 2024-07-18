@@ -24,7 +24,7 @@ producer = create_producer()
 data = read_data()
 
 for record in data:
-    producer.send('your-topic', value=record)
+    producer.send('Our_topic', value=record)
     print(f'Sent: {record}')
     time.sleep(1)  
 

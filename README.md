@@ -1,40 +1,39 @@
-
 # Fraud Detection Data Pipeline
 
-## Overview
+## Project Overview
 
-This project implements a data pipeline for fraud detection. It generates synthetic transaction data, streams it using Apache Kafka, and stores it in MongoDB and MySQL. A fraud detection model processes the data to identify fraudulent transactions. The entire pipeline is containerized using Docker and managed with Docker Compose.
+This project is designed to detect and process fraud related data. Using a Docker Compose setup it integrates multiple components (Kafka for messaging, Python scripts for data processing, MySQL for storage, and MongoDB for additional data management).
 
 ## Components
 
-### Data Generation
+### Docker Compose
+Docker Compose is used to orchestrate the multi-container application. It defines the services, networks, and volumes required for the project.
 
-- **Synthetic Library:** Generates synthetic transaction data.
-- **Python Script (`kafka_producer.py`):** Runs the Synthetic library and sends data to the Kafka producer.
+### Kafka
+Kafka is a distributed messaging system used to stream data between the producer and consumer scripts. It ensures reliable data transfer and processing.
 
-### Data Streaming
+- **kafka_producer.py**: This script generates and sends messages to a Kafka topic.
+- **kafka_consumer.py**: This script consumes messages from a Kafka topic and stores them in MongoDB and MySQL.
 
-- **Kafka Producer:** Sends data to Kafka topics.
-- **Apache Kafka:** Acts as the message broker.
-- **Kafka Consumer (`kafka_consumer.py`):** Consumes data from Kafka topics.
+### Python Scripts
+- **data_generator.py**: Generates synthetic data for testing and development purposes.
+- **fraud_detection_model.py**: Trains a model on historical data to predict fraudulent activities in future data.
+- **mysql_storage.py**: Handles the storage of processed data into a MySQL database.
 
-- **Kafka Topics:** Kafka topics are categories to which messages are published by produces, and read by consumers. Topics are the primary way for organizing and managing data in Apache Kafka.
+### MySQL
+A relational database used to store the processed data. It ensures structured storage and efficient querying.
 
-### Data Storage
+### MongoDB
+A NoSQL database used for storing unstructured data and additional metadata required for the project.
 
-- **MongoDB:** Stores raw transaction data.
-- **MySQL:** Stores processed and flagged transactions.
+## Interaction
 
-### Data Processing
+1. **Data Generation**: The `data_generator.py` script creates synthetic data.
+2. **Data Production**: The `kafka_producer.py` script sends this data to a Kafka topic.
+3. **Data Consumption**: The `kafka_consumer.py` script retrieves data from the Kafka topic and stores it in MongoDB and MySQL.
+4. **Fraud Detection**: The `fraud_detection_model.py` processes historical data to train a model that predicts fraudulent activities.
 
-- **Python Script (`fraud_detection_model.py`):** Runs the fraud detection model to identify fraudulent transactions.
-- **Fraud Detection Model:** Uses machine learning libraries like Scikit-learn or TensorFlow.
-
-### Containers and Orchestration
-
-- **Docker Containers:** Each component runs in its own Docker container.
-- **Docker Compose:** Manages multi-container Docker applications.
-
+## Running the Project
 
 ## Getting Started
 

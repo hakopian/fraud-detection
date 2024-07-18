@@ -8,7 +8,7 @@ def create_consumer():
     for _ in range(10):  # Retry 10 times
         try:
             consumer = KafkaConsumer(
-                'your-topic',
+                'Our_topic',
                 bootstrap_servers='kafka:9092',
                 auto_offset_reset='earliest',
                 enable_auto_commit=True,
