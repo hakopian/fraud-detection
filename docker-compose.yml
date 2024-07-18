@@ -53,6 +53,17 @@ services:
     ports:
       - "3306:3306"
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3307:3307"
+    networks:
+      - default
+    depends_on:
+      - mongo
+      - mysql
+
   producer:
     build: .
     command: ["python", "kafka_producer.py"]
