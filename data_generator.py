@@ -6,14 +6,20 @@ fake = Faker()
 
 def generate_transaction_data(num_records, labeled=True):
     data = []
-    for _ in range(num_records):
+    location_choices = [fake.address() for _ in range(100)]  # diverse list of location
+
+    # randomizing number of transactions per month
+    months = [fake.date_this_year().strftime('%Y-%m') for _ in range(num_records)]
+    np.random.shuffle(months)
+
+    for month in months:
         amount = round(np.random.uniform(1.0, 1000.0), 2)
         merchant = fake.company()
-        location = fake.address()
+        location = np.random.choice(location_choices)
         
         transaction = {
             'transaction_id': fake.uuid4(),
-            'transaction_date': fake.date_time_this_year(),
+            'transaction_date': fake.date_time_this_month().replace(month=int(month.split('-')[1]), year=int(month.split('-')[0])),
             'amount': amount,
             'customer_id': fake.uuid4(),
             'card_number': fake.credit_card_number(),
