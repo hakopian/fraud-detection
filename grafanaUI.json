@@ -24,9 +24,8 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
-      "description": "Total number of transactions not flagged as fraudulent from MySQL database",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -34,8 +33,16 @@
             "mode": "percentage",
             "steps": [
               {
-                "color": "dark-green",
+                "color": "green",
                 "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
               }
             ]
           }
@@ -48,24 +55,21 @@
         "x": 0,
         "y": 0
       },
-      "id": 1,
+      "id": 10,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
-          "fields": "/^id$/",
+          "fields": "",
           "values": false
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
-        "sizing": "auto",
-        "text": {
-          "titleSize": 1
-        }
+        "sizing": "auto"
       },
       "pluginVersion": "11.1.0",
       "targets": [
@@ -73,12 +77,12 @@
           "dataset": "fraud_detection",
           "datasource": {
             "type": "mysql",
-            "uid": "cds55vzry248wb"
+            "uid": "P211906C1C32DB77E"
           },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select * from transactions where fraudulent != 1;",
+          "rawSql": "SELECT COUNT(*)\nFROM transactions\nWHERE fraudulent != 1;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -96,17 +100,17 @@
               }
             ],
             "limit": 50
-          },
-          "table": "transactions"
+          }
         }
       ],
-      "title": "Total Number of Accepted transactions",
-      "transparent": true,
+      "title": "Total Legitimate Transactions",
       "type": "gauge"
     },
     {
-      "datasource": {},
-      "description": "Total number of fraudulent transactions detected from MySQL database",
+      "datasource": {
+        "type": "mysql",
+        "uid": "P211906C1C32DB77E"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -116,6 +120,14 @@
               {
                 "color": "dark-red",
                 "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 70
+              },
+              {
+                "color": "dark-red",
+                "value": 85
               }
             ]
           }
@@ -128,24 +140,21 @@
         "x": 12,
         "y": 0
       },
-      "id": 2,
+      "id": 9,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
-          "fields": "/^id$/",
+          "fields": "",
           "values": false
         },
         "showThresholdLabels": false,
         "showThresholdMarkers": true,
-        "sizing": "auto",
-        "text": {
-          "titleSize": 1
-        }
+        "sizing": "auto"
       },
       "pluginVersion": "11.1.0",
       "targets": [
@@ -153,12 +162,12 @@
           "dataset": "fraud_detection",
           "datasource": {
             "type": "mysql",
-            "uid": "cds55vzry248wb"
+            "uid": "P211906C1C32DB77E"
           },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT * FROM transactions WHERE fraudulent = 1;",
+          "rawSql": "SELECT COUNT(*)\nFROM transactions\nWHERE fraudulent = 1;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -176,18 +185,16 @@
               }
             ],
             "limit": 50
-          },
-          "table": "transactions"
+          }
         }
       ],
-      "title": "Total Number of Fraudulent transactions",
-      "transparent": true,
+      "title": "Total Fraudulent Transactions",
       "type": "gauge"
     },
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
       "description": "Transactions over time ordered by month",
       "fieldConfig": {
@@ -273,7 +280,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT DATE(transaction_date) AS date, COUNT(*) AS transaction_count\r\nFROM transactions\r\nGROUP BY DATE(transaction_date)\r\nORDER BY DATE(transaction_date);\r\n",
+          "rawSql": "SELECT DATE(transaction_date) AS date, COUNT(*) AS transaction_count\r\nFROM transactions\r\nGROUP BY DATE(transaction_date)\r\nORDER BY DATE(transaction_date);",
           "refId": "A",
           "sql": {
             "columns": [
@@ -301,7 +308,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
       "fieldConfig": {
         "defaults": {
@@ -359,7 +366,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT DATE_FORMAT(transaction_date, '%Y-%m') AS month, \r\n       SUM(fraudulent) / COUNT(*) AS fraud_rate\r\nFROM transactions\r\nGROUP BY DATE_FORMAT(transaction_date, '%Y-%m')\r\nORDER BY month;\r\n\r\n",
+          "rawSql": "SELECT DATE_FORMAT(transaction_date, '%Y-%m') AS month, \r\n       SUM(fraudulent) / COUNT(*) AS fraud_rate\r\nFROM transactions\r\nGROUP BY DATE_FORMAT(transaction_date, '%Y-%m')\r\nORDER BY month;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -387,7 +394,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
       "description": "Calculates fraud rates by state for 2024 transactions by showing average percentages in descending order",
       "fieldConfig": {
@@ -455,7 +462,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(location, ', ', -1), ' ', 1) AS state,\r\n       AVG(fraudulent) * 100 AS `fraud rate percentage`\r\nFROM transactions\r\nWHERE YEAR(transaction_date) = 2024\r\nGROUP BY state\r\nORDER BY `fraud rate percentage` DESC;\r\n",
+          "rawSql": "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(location, ', ', -1), ' ', 1) AS state,\r\n       AVG(fraudulent) * 100 AS `fraud rate percentage`\r\nFROM transactions\r\nWHERE YEAR(transaction_date) = 2024\r\nGROUP BY state\r\nORDER BY `fraud rate percentage` DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -483,7 +490,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
       "description": "Transaction and fraudulent transactions ordered by fraud amount. The table includes with ",
       "fieldConfig": {
@@ -545,7 +552,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT card_number,\r\n       COUNT(*) AS `transaction count`,\r\n       SUM(fraudulent = 1) AS `fraudulent transaction count`\r\nFROM transactions\r\nGROUP BY card_number\r\nORDER BY `fraudulent transaction count` DESC;\r\n\r\n",
+          "rawSql": "SELECT card_number,\r\n       COUNT(*) AS `transaction count`,\r\n       SUM(fraudulent = 1) AS `fraudulent transaction count`\r\nFROM transactions\r\nGROUP BY card_number\r\nORDER BY `fraudulent transaction count` DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -573,7 +580,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
       "fieldConfig": {
         "defaults": {
@@ -658,7 +665,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT CASE WHEN fraudulent = 1 THEN 'Fraudulent' ELSE 'Non-Fraudulent' END AS transaction_type, COUNT(*) AS transaction_count FROM transactions GROUP BY fraudulent;\r\n\r\n\r\n",
+          "rawSql": "SELECT CASE WHEN fraudulent = 1 THEN 'Fraudulent' ELSE 'Non-Fraudulent' END AS transaction_type, COUNT(*) AS transaction_count FROM transactions GROUP BY fraudulent;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -686,7 +693,7 @@
     {
       "datasource": {
         "type": "mysql",
-        "uid": "cds90ooy9sfswe"
+        "uid": "P211906C1C32DB77E"
       },
       "fieldConfig": {
         "defaults": {
@@ -770,7 +777,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT DATE_FORMAT(STR_TO_DATE(transaction_date, '%Y-%m-%d %H:%i:%s'), '%Y-%m') AS transaction_month,\r\n       COUNT(*) AS total_transactions,\r\n       SUM(fraudulent) AS fraudulent_transactions,\r\n       (SUM(fraudulent) / COUNT(*)) * 100 AS fraud_rate\r\nFROM transactions\r\nGROUP BY transaction_month\r\nORDER BY transaction_month;\r\n\r\n",
+          "rawSql": "SELECT DATE_FORMAT(STR_TO_DATE(transaction_date, '%Y-%m-%d %H:%i:%s'), '%Y-%m') AS transaction_month,\r\n       COUNT(*) AS total_transactions,\r\n       SUM(fraudulent) AS fraudulent_transactions,\r\n       (SUM(fraudulent) / COUNT(*)) * 100 AS fraud_rate\r\nFROM transactions\r\nGROUP BY transaction_month\r\nORDER BY transaction_month;",
           "refId": "A",
           "sql": {
             "columns": [
