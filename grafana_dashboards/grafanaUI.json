@@ -462,7 +462,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(location, ', ', -1), ' ', 1) AS state,\r\n       AVG(fraudulent) * 100 AS `fraud rate percentage`\r\nFROM transactions\r\nWHERE YEAR(transaction_date) = 2024\r\nGROUP BY state\r\nORDER BY `fraud rate percentage` DESC;",
+          "rawSql": "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(location, ', ', -1), ' ', 1) AS region,\r\n       AVG(fraudulent) * 100 AS `fraud rate percentage`\r\nFROM transactions\r\nWHERE YEAR(transaction_date) = 2024\r\nGROUP BY state\r\nORDER BY `fraud rate percentage` DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -483,7 +483,7 @@
           }
         }
       ],
-      "title": "Fraud Rate Percentage by State",
+      "title": "Fraud Rate Percentage by Region",
       "transparent": true,
       "type": "table"
     },

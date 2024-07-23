@@ -24,14 +24,15 @@ Kafka is a distributed messaging system used to stream data between the producer
 A relational database used to store the processed data. It ensures structured storage and efficient querying.
 
 ### MongoDB
-A NoSQL database used for storing unstructured data and additional metadata required for the project.
+A NoSQL database used for storing unstructured data and additional metadata.
 
 ## Interaction
 
-1. **Data Generation**: The `data_generator.py` script creates synthetic data.
-2. **Data Production**: The `kafka_producer.py` script sends this data to a Kafka topic.
-3. **Data Consumption**: The `kafka_consumer.py` script retrieves data from the Kafka topic and stores it in MongoDB and MySQL.
-4. **Fraud Detection**: The `fraud_detection_model.py` processes historical data to train a model that predicts fraudulent activities.
+1. **Data Generation**: The `data_generator.py` script creates synthetic data (test & train data sets).
+2. **Fraud Detection**: The `fraud_detection_model.py` processes historical data to train a model that predicts fraudulent activities.
+3. **Data Production**: The `kafka_producer.py` script sends this data to a Kafka topic.
+4. **Data Consumption**: The `kafka_consumer.py` script retrieves data from the Kafka topic and stores it in MongoDB and MySQL.
+5. **Grafana**: The `datasource.yaml & dashboards.yaml` Automatically sync up MySQL, prepares for automated dashboard creation by dashboards.yaml.
 
 ## Running the Project
 
