@@ -53,6 +53,7 @@ services:
     ports:
       - "3308:3306"
 
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -60,9 +61,12 @@ services:
       - "3000:3000"
     volumes:
       - ./datasource.yaml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./grafana_dashboards:/etc/grafana/provisioning/dashboards
     depends_on:
       - mongo
       - mysql
+
 
 
   producer:
