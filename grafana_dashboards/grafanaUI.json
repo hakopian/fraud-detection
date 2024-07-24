@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -26,23 +26,23 @@
         "type": "mysql",
         "uid": "P211906C1C32DB77E"
       },
+      "description": "Total Number of Legitimate and Fraudulent Transactions",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
             "mode": "percentage",
             "steps": [
               {
-                "color": "green",
+                "color": "semi-dark-red",
                 "value": null
               },
               {
-                "color": "orange",
-                "value": 70
-              },
-              {
-                "color": "red",
-                "value": 85
+                "color": "semi-dark-green",
+                "value": 51
               }
             ]
           }
@@ -57,9 +57,11 @@
       },
       "id": 10,
       "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -67,9 +69,9 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.1.0",
       "targets": [
@@ -82,8 +84,38 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*)\nFROM transactions\nWHERE fraudulent != 1;",
+          "rawSql": "SELECT COUNT(*) as 'Legitimate'\r\nFROM transactions\r\nWHERE fraudulent != 1 and transaction_date BETWEEN $__timeFrom() AND $__timeTo();",
           "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "fraud_detection",
+          "datasource": {
+            "type": "mysql",
+            "uid": "P211906C1C32DB77E"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as 'Fraudulent'\r\nFROM transactions\r\nWHERE fraudulent = 1 AND transaction_date BETWEEN $__timeFrom() AND $__timeTo();",
+          "refId": "B",
           "sql": {
             "columns": [
               {
@@ -103,31 +135,36 @@
           }
         }
       ],
-      "title": "Total Legitimate Transactions",
-      "type": "gauge"
+      "title": "Total Number of Transactions",
+      "transparent": true,
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "mysql",
         "uid": "P211906C1C32DB77E"
       },
+      "description": "The percentage of transactions flagged as fraudulent from the dataset.",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "thresholds": {
-            "mode": "percentage",
+            "mode": "absolute",
             "steps": [
               {
-                "color": "dark-red",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "dark-red",
-                "value": 70
+                "color": "#EAB839",
+                "value": 30.01
               },
               {
-                "color": "dark-red",
-                "value": 85
+                "color": "red",
+                "value": 31
               }
             ]
           }
@@ -140,11 +177,13 @@
         "x": 12,
         "y": 0
       },
-      "id": 9,
+      "id": 12,
       "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -152,9 +191,9 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.1.0",
       "targets": [
@@ -167,7 +206,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*)\nFROM transactions\nWHERE fraudulent = 1;",
+          "rawSql": "select round(sum(fraudulent) / count(*) * 100, 2) as 'fraud rate' from transactions WHERE transaction_date BETWEEN $__timeFrom() AND $__timeTo() ;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -188,8 +227,9 @@
           }
         }
       ],
-      "title": "Total Fraudulent Transactions",
-      "type": "gauge"
+      "title": "Fraud Rate From all Transactions",
+      "transparent": true,
+      "type": "stat"
     },
     {
       "datasource": {
@@ -239,7 +279,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": null
               },
               {
@@ -280,7 +320,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT DATE(transaction_date) AS date, COUNT(*) AS transaction_count\r\nFROM transactions\r\nGROUP BY DATE(transaction_date)\r\nORDER BY DATE(transaction_date);",
+          "rawSql": "SELECT DATE(transaction_date) AS date, COUNT(*) AS transaction_count\r\nFROM transactions WHERE transaction_date BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY DATE(transaction_date)\r\nORDER BY DATE(transaction_date);",
           "refId": "A",
           "sql": {
             "columns": [
@@ -313,19 +353,27 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "semi-dark-green",
                 "value": null
               },
               {
-                "color": "red",
-                "value": 80
+                "color": "semi-dark-yellow",
+                "value": 0.275
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 0.29
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 0.31
               }
             ]
           }
@@ -366,7 +414,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT DATE_FORMAT(transaction_date, '%Y-%m') AS month, \r\n       SUM(fraudulent) / COUNT(*) AS fraud_rate\r\nFROM transactions\r\nGROUP BY DATE_FORMAT(transaction_date, '%Y-%m')\r\nORDER BY month;",
+          "rawSql": "SELECT DATE_FORMAT(transaction_date, '%Y-%m') AS month, \r\n       SUM(fraudulent) / COUNT(*) AS fraud_rate\r\nFROM transactions WHERE transaction_date BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY DATE_FORMAT(transaction_date, '%Y-%m')\r\nORDER BY month;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -396,7 +444,7 @@
         "type": "mysql",
         "uid": "P211906C1C32DB77E"
       },
-      "description": "Calculates fraud rates by state for 2024 transactions by showing average percentages in descending order",
+      "description": "Fraudulent Transactions ordered by day of the week it occurred",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -416,10 +464,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -432,7 +476,7 @@
         "x": 0,
         "y": 16
       },
-      "id": 8,
+      "id": 11,
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -447,7 +491,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "fraud rate percentage"
+            "displayName": "fraudulent_transactions"
           }
         ]
       },
@@ -457,12 +501,12 @@
           "dataset": "fraud_detection",
           "datasource": {
             "type": "mysql",
-            "uid": "cds55vzry248wb"
+            "uid": "P211906C1C32DB77E"
           },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(location, ', ', -1), ' ', 1) AS region,\r\n       AVG(fraudulent) * 100 AS `fraud rate percentage`\r\nFROM transactions\r\nWHERE YEAR(transaction_date) = 2024\r\nGROUP BY state\r\nORDER BY `fraud rate percentage` DESC;",
+          "rawSql": "SELECT DAYNAME(transaction_date) AS `Day of Week`,\r\nCOUNT(*) AS 'Fraudulent Transactions'\r\nFROM transactions\r\nWHERE fraudulent = 1\r\nAND transaction_date BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY `Day of Week`\r\nORDER BY FIELD(`Day of Week`, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');",
           "refId": "A",
           "sql": {
             "columns": [
@@ -483,7 +527,7 @@
           }
         }
       ],
-      "title": "Fraud Rate Percentage by Region",
+      "title": "Fraudulent Transactions by Day of Week",
       "transparent": true,
       "type": "table"
     },
@@ -492,18 +536,31 @@
         "type": "mysql",
         "uid": "P211906C1C32DB77E"
       },
-      "description": "Transaction and fraudulent transactions ordered by fraud amount. The table includes with ",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "inspect": false
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -518,7 +575,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "short"
         },
         "overrides": []
       },
@@ -528,20 +586,28 @@
         "x": 12,
         "y": 16
       },
-      "id": 4,
+      "id": 3,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true
         },
-        "showHeader": true
+        "orientation": "auto",
+        "showValue": "never",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
-      "pluginVersion": "11.1.0",
       "targets": [
         {
           "dataset": "fraud_detection",
@@ -552,7 +618,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT card_number,\r\n       COUNT(*) AS `transaction count`,\r\n       SUM(fraudulent = 1) AS `fraudulent transaction count`\r\nFROM transactions\r\nGROUP BY card_number\r\nORDER BY `fraudulent transaction count` DESC;",
+          "rawSql": "SELECT DATE_FORMAT(STR_TO_DATE(transaction_date, '%Y-%m-%d %H:%i:%s'), '%Y-%m') AS transaction_month,\r\n       COUNT(*) AS total_transactions,\r\n       SUM(fraudulent) AS fraudulent_transactions,\r\n       (SUM(fraudulent) / COUNT(*)) * 100 AS fraud_rate\r\nFROM transactions WHERE transaction_date BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY transaction_month\r\nORDER BY transaction_month;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -573,9 +639,9 @@
           }
         }
       ],
-      "title": "Transactions and Fraudulent transactions ordered by fraud",
+      "title": "Transactions and Fraud Rate Ordered by Month",
       "transparent": true,
-      "type": "table"
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -665,7 +731,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT CASE WHEN fraudulent = 1 THEN 'Fraudulent' ELSE 'Non-Fraudulent' END AS transaction_type, COUNT(*) AS transaction_count FROM transactions GROUP BY fraudulent;",
+          "rawSql": "SELECT CASE WHEN fraudulent = 1 THEN 'Fraudulent' ELSE 'Non-Fraudulent' END AS transaction_type, COUNT(*) AS transaction_count FROM transactions WHERE transaction_date BETWEEN $__timeFrom() AND $__timeTo() GROUP BY fraudulent;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -695,31 +761,18 @@
         "type": "mysql",
         "uid": "P211906C1C32DB77E"
       },
+      "description": "Calculates fraud rates by region for 2024 transactions by showing average percentages in descending order",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -734,8 +787,7 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "short"
+          }
         },
         "overrides": []
       },
@@ -745,39 +797,38 @@
         "x": 12,
         "y": 24
       },
-      "id": 3,
+      "id": 8,
       "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "right",
-          "showLegend": true
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
         },
-        "orientation": "auto",
-        "showValue": "never",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "fraud rate percentage"
+          }
+        ]
       },
+      "pluginVersion": "11.1.0",
       "targets": [
         {
           "dataset": "fraud_detection",
           "datasource": {
             "type": "mysql",
-            "uid": "cds55vzry248wb"
+            "uid": "P211906C1C32DB77E"
           },
           "editorMode": "code",
           "format": "table",
+          "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT DATE_FORMAT(STR_TO_DATE(transaction_date, '%Y-%m-%d %H:%i:%s'), '%Y-%m') AS transaction_month,\r\n       COUNT(*) AS total_transactions,\r\n       SUM(fraudulent) AS fraudulent_transactions,\r\n       (SUM(fraudulent) / COUNT(*)) * 100 AS fraud_rate\r\nFROM transactions\r\nGROUP BY transaction_month\r\nORDER BY transaction_month;",
+          "rawSql": "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(location, ', ', -1), ' ', 1) AS region,\r\nAVG(fraudulent) * 100 AS `fraud rate percentage`\r\nFROM transactions\r\nWHERE transaction_date BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY region\r\nORDER BY `fraud rate percentage` DESC;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -798,9 +849,9 @@
           }
         }
       ],
-      "title": "Transactions and Fraud Rate Ordered by Month",
+      "title": "Fraud Rate Percentage by Region",
       "transparent": true,
-      "type": "barchart"
+      "type": "table"
     }
   ],
   "refresh": "",
@@ -817,6 +868,6 @@
   "timezone": "browser",
   "title": "Fraud Dashboard",
   "uid": "dds590i9v591ce",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
