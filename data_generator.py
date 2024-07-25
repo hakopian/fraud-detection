@@ -30,7 +30,7 @@ def generate_transaction_data(num_records, labeled=True):
         if labeled:
             # fraud determination rule (can be changed)
             fraudulent = 0
-            if amount > 700 or "Ltd" in merchant or "Street" in location:
+            if amount > 700 or "Ltd" in merchant:
                 fraudulent = 1
             transaction['fraudulent'] = fraudulent
         
