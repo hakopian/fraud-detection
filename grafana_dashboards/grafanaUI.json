@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -155,7 +155,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": null
               }
             ]
@@ -349,7 +349,9 @@
           "color": {
             "mode": "continuous-GrYlRd"
           },
+          "fieldMinMax": false,
           "mappings": [],
+          "min": 0.01,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -379,7 +381,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [],
-          "fields": "",
+          "fields": "/^fraud_rate$/",
           "values": true
         },
         "showUnfilled": true,
@@ -847,6 +849,6 @@
   "timezone": "browser",
   "title": "Fraud Dashboard",
   "uid": "dds590i9v591ce",
-  "version": 6,
+  "version": 2,
   "weekStart": ""
 }
